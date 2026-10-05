@@ -16,6 +16,17 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
     in
     {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          default = pkgs.callPackage ./nix/package.nix { };
+          minicore = self.packages.${system}.default;
+        }
+      );
+
       devShells = forAllSystems (
         system:
         let
@@ -28,6 +39,7 @@
               harec
               qbe
               haredoc
+              hare-lsp
               just
             ];
 
