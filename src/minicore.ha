@@ -1,27 +1,39 @@
-use fmt;
 use os;
-use bufio;
-use io;
-use strings;
-use errors;
-
-fn run_applet(cmd: []str) (errors::invalid | void) = {
-	if (len(cmd) == 0) {
-		return errors::invalid;
-	};
-
-	switch(cmd[0]) {
-	case => fmt::printfln("Work In Progress, no applets, check out other branches for specific applets", cmd[0])!; 
-	};
-};
+use src::dispatcher;
+use src::applets::base64;
+use src::applets::cat;
+use src::applets::date;
+use src::applets::rm;
+use src::applets::rmdir;
+use src::applets::sort;
 
 export fn main() void = {
+  const applets: []dispatcher::entry = [
+    dispatcher::entry {
+      name = "base64",
+      run = &base64::run,
+    },
+    dispatcher::entry {
+      name = "cat",
+      run = &cat::run,
+    },
+    dispatcher::entry {
+      name = "date",
+      run = &date::run,
+    },
+    dispatcher::entry {
+      name = "rm",
+      run = &rm::run,
+    },
+    dispatcher::entry {
+      name = "rmdir",
+      run = &rmdir::run,
+    },
+    dispatcher::entry {
+      name = "sort",
+      run = &sort::run,
+    },
+  ];
 
-	match (run_applet(os::args[1..])) {
-	case void =>
-		yield;
-	case let err: errors::invalid =>
-		fmt::println("usage: harebox <applet> [args...]")!;
-	};
+  dispatcher::dispatch(applets, os::args[1..]);
 };
-
