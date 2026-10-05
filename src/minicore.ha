@@ -2,7 +2,9 @@ use os;
 use src::dispatcher;
 use src::applets::base64;
 use src::applets::cat;
+use src::applets::cp;
 use src::applets::date;
+use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
 use src::applets::sort;
@@ -18,8 +20,16 @@ export fn main() void = {
       run = &cat::run,
     },
     dispatcher::entry {
+      name = "cp",
+      run = &cp::run,
+    },
+    dispatcher::entry {
       name = "date",
       run = &date::run,
+    },
+    dispatcher::entry {
+      name = "mv",
+      run = &mv::run,
     },
     dispatcher::entry {
       name = "rm",
