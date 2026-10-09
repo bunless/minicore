@@ -9,6 +9,7 @@ use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
 use src::applets::sort;
+use src::applets::yes;
 
 export fn main() void = {
   const applets: []dispatcher::entry = [
@@ -47,6 +48,10 @@ export fn main() void = {
     dispatcher::entry {
       name = "sort",
       run = &sort::run,
+    },
+    dispatcher::entry {
+      name = "yes",
+      run = &yes::run,
     },
   ];
 
