@@ -8,7 +8,14 @@ export type applet = fn(args: []str) void;
 
 
 export fn dispatch(applets: []entry, args: []str) void = {
-  if (len(args) == 0) return;
+  if (len(args) == 0) {
+    fmt::printfln("Usage: minicore <applet> [args...]",)!;
+    fmt::printfln("Available applets:",)!;
+    for (let i: size = 0; i < len(applets); i += 1) {
+      fmt::printfln("  {}", applets[i].name)!;
+    };
+    return;
+  };
 
   // fmt::printfln("applets: {}, first arg: '{}'", len(applets), args[0])!;
 

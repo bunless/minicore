@@ -41,6 +41,8 @@
               haredoc
               hare-lsp
               just
+              elfkickers
+              upx
             ];
 
             HAREPATH = "${pkgs.hare}/src/hare/stdlib";

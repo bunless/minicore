@@ -4,6 +4,7 @@ use src::applets::base64;
 use src::applets::cat;
 use src::applets::cp;
 use src::applets::date;
+use src::applets::less;
 use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
@@ -26,6 +27,10 @@ export fn main() void = {
     dispatcher::entry {
       name = "date",
       run = &date::run,
+    },
+    dispatcher::entry {
+      name = "less",
+      run = &less::run,
     },
     dispatcher::entry {
       name = "mv",
