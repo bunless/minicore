@@ -11,6 +11,10 @@ use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
 use src::applets::sha1sum;
+use src::applets::sha224sum;
+use src::applets::sha256sum;
+use src::applets::sha384sum;
+use src::applets::sha512sum;
 use src::applets::sort;
 use src::applets::unlink;
 use src::applets::wc;
@@ -62,6 +66,22 @@ export fn main() void = {
 		dispatcher::entry {
 			name = "sha1sum",
 			run = &sha1sum::run,
+		},
+		dispatcher::entry {
+			name = "sha224sum",
+			run = &sha224sum::run,
+		},
+		dispatcher::entry {
+			name = "sha256sum",
+			run = &sha256sum::run,
+		},
+		dispatcher::entry {
+			name = "sha384sum",
+			run = &sha384sum::run,
+		},
+		dispatcher::entry {
+			name = "sha512sum",
+			run = &sha512sum::run,
 		},
 		dispatcher::entry {
 			name = "sort",
