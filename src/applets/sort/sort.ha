@@ -1,4 +1,4 @@
-use fmt;
+use fmt::*;
 use os;
 use fs;
 use io;
@@ -6,17 +6,17 @@ use sort;
 use strings;
 use sort::cmp;
 
-export fn run(files: []str) void = {
+export fn run(files: []str) int = {
 	for (let file .. files) {
 		const f = match (os::open(file)) {
-		case let f: io::file =>
-			yield f;
-		case let e: fs::error =>
-			fmt::printfln("sort: {}: {}", file, fs::strerror(e))!;
-			return;
-		case nomem =>
-			fmt::printfln("sort: {}: out of memory", file)!;
-			return;
+			case let f: io::file =>
+				yield f;
+			case let e: fs::error =>
+				printfln("sort: {}: {}", file, fs::strerror(e))!;
+				return 1;
+			case nomem =>
+				printfln("sort: {}: out of memory", file)!;
+				return 1;
 		};
 		defer io::close(f)!;
 
@@ -36,7 +36,8 @@ export fn run(files: []str) void = {
 		sort::sort(lines: []opaque, size(str), &cmp::strs)!;
 
 		for (let i = 0z; i < n; i += 1) {
-			fmt::println(lines[i])!;
+			println(lines[i])!;
 		};
 	};
+	return 0;
 };

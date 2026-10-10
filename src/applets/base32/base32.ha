@@ -2,7 +2,7 @@ use fmt::*;
 use os;
 use fs;
 use io;
-use encoding::base64;
+use encoding::base32;
 
 def BUFSZ = 57 * 1024z;
 
@@ -10,12 +10,12 @@ def LINESZ = 76z;
 
 export fn run(args: []str) int = {
 	if (len(args) == 0) {
-		println("usage: minicore base64 <file>")!;
+		println("usage: minicore base32 <file>")!;
 		return 1;
 	};
 
 	if (len(args) > 1) {
-		errorfln("base64: extra operand '{}'", args[1])!;
+		errorfln("base32: extra operand '{}'", args[1])!;
 		return 1;
 	};
 
@@ -30,10 +30,10 @@ export fn run(args: []str) int = {
 			case let f: io::file =>
 				yield f;
 			case let e: fs::error =>
-				printfln("base64: {}: {}", a, fs::strerror(e))!;
+				printfln("base32: {}: {}", a, fs::strerror(e))!;
 				continue;
 			case nomem =>
-				printfln("base64: {}: out of memory", a)!;
+				printfln("base32: {}: out of memory", a)!;
 				continue;
 		};
 
@@ -44,16 +44,16 @@ export fn run(args: []str) int = {
 				case io::EOF =>
 					break;
 				case let e: io::error =>
-					printfln("base64: {}: {}", a, io::strerror(e))!;
+					printfln("base32: {}: {}", a, io::strerror(e))!;
 					break;
 			};
 
-			let out: []u8 = match (base64::encodeslice(&base64::std_encoding,
+			let out: []u8 = match (base32::encodeslice(&base32::std_encoding,
 				buf[..n])) {
 				case let out: []u8 =>
 					yield out;
 				case nomem =>
-					printfln("base64: {}: out of memory", a)!;
+					printfln("base32: {}: out of memory", a)!;
 					break;
 			};
 
