@@ -1,12 +1,14 @@
 use os;
 use src::dispatcher;
+use src::applets::arch;
 use src::applets::base32;
 use src::applets::base64;
 use src::applets::cat;
 use src::applets::cp;
 use src::applets::date;
-use src::applets::untrue;
+use src::applets::dir;
 use src::applets::less;
+use src::applets::ls;
 use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
@@ -17,12 +19,18 @@ use src::applets::sha384sum;
 use src::applets::sha512sum;
 use src::applets::sort;
 use src::applets::unlink;
+use src::applets::untrue;
+use src::applets::vdir;
 use src::applets::wc;
 use src::applets::whoami;
 use src::applets::yes;
 
 export fn main() void = {
 	const applets: []dispatcher::entry = [
+		dispatcher::entry {
+			name = "arch",
+			run = &arch::run,
+		},
 		dispatcher::entry {
 			name = "base32",
 			run = &base32::run,
@@ -44,12 +52,20 @@ export fn main() void = {
 			run = &date::run,
 		},
 		dispatcher::entry {
+			name = "dir",
+			run = &dir::run,
+		},
+		dispatcher::entry {
 			name = "false",
 			run = &untrue::run,
 		},
 		dispatcher::entry {
 			name = "less",
 			run = &less::run,
+		},
+		dispatcher::entry {
+			name = "ls",
+			run = &ls::run,
 		},
 		dispatcher::entry {
 			name = "mv",
@@ -90,6 +106,10 @@ export fn main() void = {
 		dispatcher::entry {
 			name = "unlink",
 			run = &unlink::run,
+		},
+		dispatcher::entry {
+			name = "vdir",
+			run = &vdir::run,
 		},
 		dispatcher::entry {
 			name = "wc",
