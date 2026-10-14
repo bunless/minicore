@@ -10,8 +10,7 @@ export fn run(args: []str) int = {
 	defer free(buf);
 
 	const st = match (os::stat(args[0])) {
-		case let st: fs::filestat =>
-			yield st;
+		case let st: fs::filestat => yield st;
 		case let e: fs::error =>
 			errorfln("cp: {}: {}", args[0], fs::strerror(e))!;
 			return 1;
@@ -23,8 +22,7 @@ export fn run(args: []str) int = {
 	};
 
 	const f = match (os::open(args[0])) {
-		case let f: io::file =>
-			yield f;
+		case let f: io::file => yield f;
 		case let e: fs::error =>
 			errorfln("cp: {}: {}", args[0], fs::strerror(e))!;
 			return 1;
@@ -36,8 +34,7 @@ export fn run(args: []str) int = {
 
 	const perm = (st.mode: u32 & 0o7777): fs::mode;
 	const dest = match (os::create(args[1], perm)) {
-		case let d: io::file =>
-			yield d;
+		case let d: io::file => yield d;
 		case let e: fs::error =>
 			errorfln("cp: {}: {}", args[1], fs::strerror(e))!;
 			return 1;
@@ -47,10 +44,8 @@ export fn run(args: []str) int = {
 
 	for (true) {
 		let n = match (io::read(f, buf)) {
-			case let n: size =>
-				yield n;
-			case io::EOF =>
-				break;
+			case let n: size => yield n;
+			case io::EOF => break;
 			case let e: io::error =>
 				printfln("cp: {}: {}", args[0], io::strerror(e))!;
 				break;

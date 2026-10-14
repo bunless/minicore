@@ -22,11 +22,12 @@ export fn run(files: []str) int = {
 		let f: io::handle = os::stdin;
 		if (name != "-") {
 			f = match (os::open(name)) {
-			case let opened: io::file => yield opened;
-			case let e: fs::error =>
-				errorfln("wc: {}: {}", name, fs::strerror(e))!;
-				status = 1;
-				continue;
+				case let opened: io::file => yield opened;
+				case let e: fs::error =>
+					errorfln("wc: {}: {}", name,
+						fs::strerror(e))!;
+					status = 1;
+					continue;
 			};
 		};
 
@@ -39,7 +40,8 @@ export fn run(files: []str) int = {
 				case let n: size => yield n;
 				case io::EOF => break;
 				case let e: io::error =>
-					errorfln("wc: {}: {}", name, io::strerror(e))!;
+					errorfln("wc: {}: {}", name,
+						io::strerror(e))!;
 					status = 1;
 					failed = true;
 					break;
@@ -49,7 +51,7 @@ export fn run(files: []str) int = {
 			for (let b .. buf[..n]) {
 				const t = tbl[b: size];
 				w += (prev & ~t & 1): size; // word starts: whitespace, then non-space
-				l += (t >> 1): size;        // only the value 3 has this bit
+				l += (t >> 1): size; // only the value 3 has this bit
 				prev = t & 1;
 			};
 		};

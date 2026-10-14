@@ -13,10 +13,8 @@ export fn run(args: []str) int = {
 	const srcs = args[..len(args) - 1];
 
 	const dest_is_dir = match (os::stat(dest)) {
-		case let st: fs::filestat =>
-			yield fs::isdir(st.mode);
-		case fs::error =>
-			yield false;
+		case let st: fs::filestat => yield fs::isdir(st.mode);
+		case fs::error => yield false;
 	};
 
 	if (len(srcs) > 1 && !dest_is_dir) {
@@ -26,16 +24,12 @@ export fn run(args: []str) int = {
 
 	for (let src .. srcs) {
 		let target = dest;
-		if (dest_is_dir) {
-			target = asprintf("{}/{}", dest, path::basename(src))!;
-		};
+		if (dest_is_dir) target = asprintf("{}/{}", dest, path::basename(src))!;
 		defer if (dest_is_dir) free(target);
 
 		match (fs::move(os::cwd, src, target)) {
-			case void =>
-				yield;
-			case let e: fs::error =>
-				errorfln("mv: {}: {}", src, fs::strerror(e))!;
+			case void => yield;
+			case let e: fs::error => errorfln("mv: {}: {}", src, fs::strerror(e))!;
 		};
 	};
 	return 0;

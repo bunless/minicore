@@ -1,6 +1,7 @@
 use os;
 use src::dispatcher;
 use src::applets::arch;
+use src::applets::b2sum;
 use src::applets::base32;
 use src::applets::base64;
 use src::applets::cat;
@@ -12,6 +13,7 @@ use src::applets::ls;
 use src::applets::mv;
 use src::applets::rm;
 use src::applets::rmdir;
+use src::applets::seq;
 use src::applets::sha1sum;
 use src::applets::sha224sum;
 use src::applets::sha256sum;
@@ -30,6 +32,10 @@ export fn main() void = {
 		dispatcher::entry {
 			name = "arch",
 			run = &arch::run,
+		},
+		dispatcher::entry {
+			name = "b2sum",
+			run = &b2sum::run,
 		},
 		dispatcher::entry {
 			name = "base32",
@@ -78,6 +84,10 @@ export fn main() void = {
 		dispatcher::entry {
 			name = "rmdir",
 			run = &rmdir::run,
+		},
+		dispatcher::entry {
+			name = "seq",
+			run = &seq::run,
 		},
 		dispatcher::entry {
 			name = "sha1sum",

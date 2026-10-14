@@ -10,25 +10,22 @@ export fn run(files: []str) int = {
 	defer free(buf);
 	for (let file .. files) {
 		const f = match (os::open(file)) {
-			case let f: io::file =>
-				yield f;
+			case let f: io::file => yield f;
 			case let e: fs::error =>
 				printfln("cat: {}: {}", file, fs::strerror(e))!;
-				continue;
+				return 1;
 			case nomem =>
 				printfln("cat: {}: out of memory", file)!;
-				continue;
+				return 1;
 		};
 
 		for (true) {
 			let n = match (io::read(f, buf)) {
-				case let n: size =>
-					yield n;
-				case io::EOF =>
-					break;
+				case let n: size => yield n;
+				case io::EOF => break;
 				case let e: io::error =>
 					printfln("cat: {}: {}", file, io::strerror(e))!;
-					break;
+					return 1;
 			};
 
 			io::writeall(os::stdout, buf[..n])!;

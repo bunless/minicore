@@ -8,10 +8,10 @@ use unix;
 
 export fn run(args: []str) int = {
 	const f = match (os::open("/etc/passwd")) {
-	case let f: io::file => yield f;
-	case let e: fs::error =>
-		errorfln("whoami: /etc/passwd: {}", fs::strerror(e))!;
-		return 1;
+		case let f: io::file => yield f;
+		case let e: fs::error =>
+			errorfln("whoami: /etc/passwd: {}", fs::strerror(e))!;
+			return 1;
 	};
 	defer io::close(f)!;
 
@@ -24,10 +24,12 @@ export fn run(args: []str) int = {
 	const uid = strconv::utos(unix::geteuid());
 
 	for (let line .. lines) {
-		const fields: []str = match(strings::split(line, ":")) {
+		const fields: []str = match (strings::split(line, ":")) {
 			case let xs: []str => yield xs;
-			case nomem => 
-				errorfln("whoami: couldn't allocate enough memory")!;
+			case nomem =>
+				errorfln(
+					"whoami: couldn't allocate enough memory"
+				)!;
 				return 1;
 		};
 		defer free(fields);

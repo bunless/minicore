@@ -10,13 +10,15 @@ export fn run(args: []str) int = {
 	if (len(args) == 0 || args[0] == ".") {
 		const cdir = os::getcwd();
 		let dirs = match (os::readdir(cdir)) {
-		case let dirs: []fs::dirent => yield dirs;
-		case let e: fs::error =>
-			printfln("vdir: {}", fs::strerror(e))!;
-			return 1;
-		case nomem =>
-			errorfln("vdir: Could not allocate enough memory")!;
-			return 1;
+			case let dirs: []fs::dirent => yield dirs;
+			case let e: fs::error =>
+				printfln("vdir: {}", fs::strerror(e))!;
+				return 1;
+			case nomem =>
+				errorfln(
+					"vdir: Could not allocate enough memory"
+				)!;
+				return 1;
 		};
 
 		// insertion sort by name, ignoring case
@@ -26,7 +28,8 @@ export fn run(args: []str) int = {
 				// should dirs[j] be listed before dirs[j - 1]?
 				const x = strings::toutf8(dirs[j].name);
 				const y = strings::toutf8(dirs[j - 1].name);
-				const n = if (len(x) < len(y)) len(x) else len(y);
+				const n = if (len(x) < len(y)) len(x)
+					else len(y);
 				let less = false;
 				let decided = false;
 
@@ -34,8 +37,12 @@ export fn run(args: []str) int = {
 				for (let k = 0z; k < n; k += 1) {
 					let p = x[k];
 					let q = y[k];
-					if (p >= ('A': u8) && p <= ('Z': u8)) p += 32;
-					if (q >= ('A': u8) && q <= ('Z': u8)) q += 32;
+					if (p >= 'A': u8
+							&& p <= 'Z': u8)
+						p += 32;
+					if (q >= 'A': u8
+							&& q <= 'Z': u8)
+						q += 32;
 					if (p != q) {
 						less = p < q;
 						decided = true;
@@ -50,14 +57,11 @@ export fn run(args: []str) int = {
 				};
 
 				// same letters, different case: plain byte order
-				if (!decided) {
-					for (let k = 0z; k < n; k += 1) {
-						if (x[k] != y[k]) {
-							less = x[k] < y[k];
-							break;
-						};
+				if (!decided)
+					for (let k = 0z; k < n; k += 1) if (x[k] != y[k]) {
+						less = x[k] < y[k];
+						break;
 					};
-				};
 
 				if (!less) break;
 
@@ -72,11 +76,14 @@ export fn run(args: []str) int = {
 		let pwraw: []u8 = [];
 		let pwlines: []str = [];
 		match (os::open("/etc/passwd")) {
-		case let f: io::file =>
-			pwraw = io::drain(f)!;
-			io::close(f)!;
-			pwlines = strings::split(strings::fromutf8(pwraw)!, "\n")!;
-		case let e: fs::error => yield;
+			case let f: io::file =>
+				pwraw = io::drain(f)!;
+				io::close(f)!;
+				pwlines =
+					strings::split(
+						strings::fromutf8(pwraw)!,
+						"\n")!;
+			case let e: fs::error => yield;
 		};
 		defer free(pwraw);
 		defer free(pwlines);
@@ -84,11 +91,14 @@ export fn run(args: []str) int = {
 		let grraw: []u8 = [];
 		let grlines: []str = [];
 		match (os::open("/etc/group")) {
-		case let f: io::file =>
-			grraw = io::drain(f)!;
-			io::close(f)!;
-			grlines = strings::split(strings::fromutf8(grraw)!, "\n")!;
-		case let e: fs::error => yield;
+			case let f: io::file =>
+				grraw = io::drain(f)!;
+				io::close(f)!;
+				grlines =
+					strings::split(
+						strings::fromutf8(grraw)!,
+						"\n")!;
+			case let e: fs::error => yield;
 		};
 		defer free(grraw);
 		defer free(grlines);
@@ -106,18 +116,18 @@ export fn run(args: []str) int = {
 			if (strings::hasprefix(dir.name, ".")) continue;
 
 			const st = match (os::stat(dir.name)) {
-			case let st: fs::filestat => yield st;
-			case let e: fs::error => continue;
+				case let st: fs::filestat => yield st;
+				case let e: fs::error => continue;
 			};
 
 			let rst = rt::st { ... };
 			let nlink: u64 = 1;
 			let blocks: u64 = 0;
 			match (rt::lstat(dir.name, &rst)) {
-			case void =>
-				nlink = rst.nlink: u64;
-				blocks = rst.blocks: u64;
-			case let e: rt::errno => void;
+				case void =>
+					nlink = rst.nlink: u64;
+					blocks = rst.blocks: u64;
+				case let e: rt::errno => void;
 			};
 			total_blocks += blocks;
 
@@ -125,7 +135,8 @@ export fn run(args: []str) int = {
 			defer free(nlinkstr);
 			const sizestr = asprintf("{}", st.sz)!;
 			defer free(sizestr);
-			if (len(nlinkstr) > max_nlink) max_nlink = len(nlinkstr);
+			if (len(nlinkstr) > max_nlink)
+				max_nlink = len(nlinkstr);
 			if (len(sizestr) > max_size) max_size = len(sizestr);
 
 			const uidstr = asprintf("{}", st.uid)!;
@@ -137,9 +148,10 @@ export fn run(args: []str) int = {
 
 			// passwd format: name:x:uid:...  group format: name:x:gid:...
 			for (let line .. pwlines) {
-				const fields = match (strings::split(line, ":")) {
-				case let xs: []str => yield xs;
-				case nomem => break;
+				const fields = match (strings::split(line,
+					":")) {
+					case let xs: []str => yield xs;
+					case nomem => break;
 				};
 				defer free(fields);
 				if (len(fields) > 2 && fields[2] == uidstr) {
@@ -148,9 +160,10 @@ export fn run(args: []str) int = {
 				};
 			};
 			for (let line .. grlines) {
-				const fields = match (strings::split(line, ":")) {
-				case let xs: []str => yield xs;
-				case nomem => break;
+				const fields = match (strings::split(line,
+					":")) {
+					case let xs: []str => yield xs;
+					case nomem => break;
 				};
 				defer free(fields);
 				if (len(fields) > 2 && fields[2] == gidstr) {
@@ -169,18 +182,18 @@ export fn run(args: []str) int = {
 			if (strings::hasprefix(dir.name, ".")) continue;
 
 			const st = match (os::stat(dir.name)) {
-			case let st: fs::filestat => yield st;
-			case let e: fs::error =>
-				errorfln("vdir: {}: {}", dir.name, fs::strerror(e))!;
-				continue;
+				case let st: fs::filestat => yield st;
+				case let e: fs::error =>
+					errorfln("vdir: {}: {}", dir.name,
+						fs::strerror(e))!;
+					continue;
 			};
 
 			let rst = rt::st { ... };
 			let nlink: u64 = 1;
 			match (rt::lstat(dir.name, &rst)) {
-			case void =>
-				nlink = rst.nlink: u64;
-			case let e: rt::errno => void;
+				case void => nlink = rst.nlink: u64;
+				case let e: rt::errno => void;
 			};
 
 			// owner and group start as the numeric ids, replaced by names if found
@@ -193,9 +206,10 @@ export fn run(args: []str) int = {
 
 			// passwd format: name:x:uid:...  group format: name:x:gid:...
 			for (let line .. pwlines) {
-				const fields = match (strings::split(line, ":")) {
-				case let xs: []str => yield xs;
-				case nomem => break;
+				const fields = match (strings::split(line,
+					":")) {
+					case let xs: []str => yield xs;
+					case nomem => break;
 				};
 				defer free(fields);
 				if (len(fields) > 2 && fields[2] == uidstr) {
@@ -204,9 +218,10 @@ export fn run(args: []str) int = {
 				};
 			};
 			for (let line .. grlines) {
-				const fields = match (strings::split(line, ":")) {
-				case let xs: []str => yield xs;
-				case nomem => break;
+				const fields = match (strings::split(line,
+					":")) {
+					case let xs: []str => yield xs;
+					case nomem => break;
 				};
 				defer free(fields);
 				if (len(fields) > 2 && fields[2] == gidstr) {
@@ -219,7 +234,8 @@ export fn run(args: []str) int = {
 			defer free(nlinkstr);
 			const sizestr = asprintf("{}", st.sz)!;
 			defer free(sizestr);
-			const nlinkpad = strings::lpad(nlinkstr, ' ', max_nlink)!;
+			const nlinkpad =
+				strings::lpad(nlinkstr, ' ', max_nlink)!;
 			defer free(nlinkpad);
 			const ownerpad = strings::rpad(owner, ' ', max_owner)!;
 			defer free(ownerpad);
@@ -243,7 +259,9 @@ export fn run(args: []str) int = {
 			} else {
 				const yr = date::asformat("%Y", &d)!;
 				defer free(yr);
-				when = asprintf("{} {}  {}", month, daypad, yr)!;
+				when =
+					asprintf("{} {}  {}", month, daypad,
+						yr)!;
 				freewhen = true;
 			};
 			defer if (freewhen) free(when);
@@ -252,18 +270,20 @@ export fn run(args: []str) int = {
 			let freename = false;
 			if (fs::islink(st.mode)) {
 				match (os::readlink(dir.name)) {
-				case let target: str =>
-					dispname = asprintf("{} -> {}", dir.name, target)!;
-					freename = true;
-				case let e: fs::error => void;
+					case let target: str =>
+						dispname =
+							asprintf("{} -> {}",
+								dir.name,
+								target)!;
+						freename = true;
+					case let e: fs::error => void;
 				};
 			};
 			defer if (freename) free(dispname);
 
-			printfln("{} {} {} {} {} {} {}",
-				fs::mode_str(st.mode),
-				nlinkpad, ownerpad, grouppad, sizepad,
-				when, dispname)!;
+			printfln("{} {} {} {} {} {} {}", fs::mode_str(st.mode),
+				nlinkpad, ownerpad, grouppad, sizepad, when,
+				dispname)!;
 		};
 	};
 

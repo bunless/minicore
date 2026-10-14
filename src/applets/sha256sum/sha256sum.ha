@@ -21,11 +21,12 @@ export fn run(files: []str) int = {
 		let f: io::handle = os::stdin;
 		if (name != "-") {
 			f = match (os::open(name)) {
-			case let opened: io::file => yield opened;
-			case let e: fs::error =>
-				errorfln("sha1sum: {}: {}", name, fs::strerror(e))!;
-				status = 1;
-				continue;
+				case let opened: io::file => yield opened;
+				case let e: fs::error =>
+					errorfln("sha1sum: {}: {}", name,
+						fs::strerror(e))!;
+					status = 1;
+					continue;
 			};
 		};
 
@@ -34,13 +35,14 @@ export fn run(files: []str) int = {
 
 		for (true) {
 			const n = match (io::read(f, buf[..])) {
-			case let n: size => yield n;
-			case io::EOF => break;
-			case let e: io::error =>
-				errorfln("sha1sum: {}: {}", name, io::strerror(e))!;
-				status = 1;
-				failed = true;
-				break;
+				case let n: size => yield n;
+				case io::EOF => break;
+				case let e: io::error =>
+					errorfln("sha1sum: {}: {}", name,
+						io::strerror(e))!;
+					status = 1;
+					failed = true;
+					break;
 			};
 			hash::write(&sha, buf[..n]);
 		};
