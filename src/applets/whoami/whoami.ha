@@ -22,14 +22,11 @@ export fn run(args: []str) int = {
 	defer free(lines);
 
 	const uid = strconv::utos(unix::geteuid());
-
 	for (let line .. lines) {
 		const fields: []str = match (strings::split(line, ":")) {
 			case let xs: []str => yield xs;
 			case nomem =>
-				errorfln(
-					"whoami: couldn't allocate enough memory"
-				)!;
+				errorfln("whoami: couldn't allocate enough memory")!;
 				return 1;
 		};
 		defer free(fields);

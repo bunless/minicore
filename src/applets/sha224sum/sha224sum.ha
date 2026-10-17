@@ -118,7 +118,6 @@ export fn run(files: []str) int = {
 	let buf: [65536]u8 = [0...];
 	let blk: [64]u8 = [0...];
 	let digest: [28]u8 = [0...]; // SHA-224 is the first 28 bytes
-	let status = 0;
 
 	// no arguments means read stdin once, treated as "-"
 	const inputs = if (len(files) == 0) 1z else len(files);
@@ -131,10 +130,8 @@ export fn run(files: []str) int = {
 			f = match (os::open(name)) {
 				case let opened: io::file => yield opened;
 				case let e: fs::error =>
-					errorfln("sha224sum: {}: {}", name,
-						fs::strerror(e))!;
-					status = 1;
-					continue;
+					errorfln("sha224sum: {}: {}", name, fs::strerror(e))!;
+					return 1;
 			};
 		};
 
@@ -149,18 +146,14 @@ export fn run(files: []str) int = {
 			0xbefa4fa4,
 		];
 		let fill = 0z, total = 0u64;
-		let failed = false;
 
 		for (true) {
 			const n = match (io::read(f, buf[..])) {
 				case let n: size => yield n;
 				case io::EOF => break;
 				case let e: io::error =>
-					errorfln("sha224sum: {}: {}", name,
-						io::strerror(e))!;
-					status = 1;
-					failed = true;
-					break;
+					errorfln("sha224sum: {}: {}", name, io::strerror(e))!;
+					return 1;
 			};
 
 			total += n: u64;
@@ -175,7 +168,6 @@ export fn run(files: []str) int = {
 		};
 
 		if (name != "-") io::close(f)!; // never close stdin
-		if (failed) continue;
 
 		blk[fill] = 0x80;
 		fill += 1;
@@ -201,5 +193,5 @@ export fn run(files: []str) int = {
 		defer free(hexstr);
 		printfln("{}  {}", hexstr, name)!;
 	};
-	return status;
+	return 0;
 };

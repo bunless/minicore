@@ -179,8 +179,7 @@ export fn run(files: []str) int = {
 	const ttyfd = match (tty::open()) {
 		case let f: io::file => yield f;
 		case let e: tty::error =>
-			printfln("less: cannot open terminal: {}",
-				tty::strerror(e))!;
+			printfln("less: cannot open terminal: {}", tty::strerror(e))!;
 			return 1;
 	};
 
@@ -233,8 +232,7 @@ export fn run(files: []str) int = {
 		const f = match (os::open(file)) {
 			case let f: io::file => yield f;
 			case let e: fs::error =>
-				printfln("less: {}: {}", file,
-					fs::strerror(e))!;
+				printfln("less: {}: {}", file, fs::strerror(e))!;
 				continue;
 			case nomem =>
 				printfln("less: {}: out of memory", file)!;
@@ -247,8 +245,7 @@ export fn run(files: []str) int = {
 
 		match (text_result) {
 			case let text: str =>
-				const lines: []str =
-					strings::split(text, "\n")!;
+				const lines: []str = strings::split(text, "\n")!;
 				let n = len(lines);
 				// Drop the final empty line caused by a trailing newline.
 				if (n > 0 && len(lines[n - 1]) == 0) n -= 1;

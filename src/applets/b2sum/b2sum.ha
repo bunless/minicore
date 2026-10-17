@@ -27,7 +27,6 @@ export fn run(files: []str) int = {
 
 		// blake2b can't be reset, so make a fresh state per file
 		let b2 = blake2b::blake2b([], 64);
-		let failed = false;
 
 		for (true) {
 			const n = match (io::read(f, buf[..])) {
@@ -41,7 +40,6 @@ export fn run(files: []str) int = {
 		};
 
 		if (name != "-") io::close(f)!;
-		if (failed) continue;
 
 		hash::sum(&b2, digest[..]);
 		const hexstr = hex::encodestr(digest[..])!;

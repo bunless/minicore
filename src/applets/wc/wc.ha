@@ -24,27 +24,21 @@ export fn run(files: []str) int = {
 			f = match (os::open(name)) {
 				case let opened: io::file => yield opened;
 				case let e: fs::error =>
-					errorfln("wc: {}: {}", name,
-						fs::strerror(e))!;
-					status = 1;
-					continue;
+					errorfln("wc: {}: {}", name, fs::strerror(e))!;
+					return 1;
 			};
 		};
 
 		let l = 0z, w = 0z, total = 0z;
 		let prev: u8 = 1; // start as "after whitespace" so a leading word counts
-		let failed = false;
 
 		for (true) {
 			const n = match (io::read(f, buf[..])) {
 				case let n: size => yield n;
 				case io::EOF => break;
 				case let e: io::error =>
-					errorfln("wc: {}: {}", name,
-						io::strerror(e))!;
-					status = 1;
-					failed = true;
-					break;
+					errorfln("wc: {}: {}", name, io::strerror(e))!;
+					return 1;
 			};
 
 			total += n;
@@ -57,11 +51,10 @@ export fn run(files: []str) int = {
 		};
 
 		if (name != "-") io::close(f)!; // never close stdin
-		if (failed) continue;
 
 		// errorfln("DEBUG {} {} {} {} failed={}", l, w, total, name, failed)!;
 		//if (len(files) == 0) printfln("{:7} {:7} {:7}", l, w, total)!;
 		printfln("{:4} {:4} {} {}", l, w, total, name)!;
 	};
-	return status;
+	return 0;
 };

@@ -15,9 +15,7 @@ export fn run(args: []str) int = {
 				printfln("vdir: {}", fs::strerror(e))!;
 				return 1;
 			case nomem =>
-				errorfln(
-					"vdir: Could not allocate enough memory"
-				)!;
+				errorfln("vdir: Could not allocate enough memory")!;
 				return 1;
 		};
 
@@ -28,8 +26,7 @@ export fn run(args: []str) int = {
 				// should dirs[j] be listed before dirs[j - 1]?
 				const x = strings::toutf8(dirs[j].name);
 				const y = strings::toutf8(dirs[j - 1].name);
-				const n = if (len(x) < len(y)) len(x)
-					else len(y);
+				const n = if (len(x) < len(y)) len(x) else len(y);
 				let less = false;
 				let decided = false;
 
@@ -37,12 +34,8 @@ export fn run(args: []str) int = {
 				for (let k = 0z; k < n; k += 1) {
 					let p = x[k];
 					let q = y[k];
-					if (p >= 'A': u8
-							&& p <= 'Z': u8)
-						p += 32;
-					if (q >= 'A': u8
-							&& q <= 'Z': u8)
-						q += 32;
+					if (p >= 'A': u8 && p <= 'Z': u8) p += 32;
+					if (q >= 'A': u8 && q <= 'Z': u8) q += 32;
 					if (p != q) {
 						less = p < q;
 						decided = true;
@@ -79,10 +72,7 @@ export fn run(args: []str) int = {
 			case let f: io::file =>
 				pwraw = io::drain(f)!;
 				io::close(f)!;
-				pwlines =
-					strings::split(
-						strings::fromutf8(pwraw)!,
-						"\n")!;
+				pwlines = strings::split(strings::fromutf8(pwraw)!, "\n")!;
 			case let e: fs::error => yield;
 		};
 		defer free(pwraw);
@@ -94,10 +84,7 @@ export fn run(args: []str) int = {
 			case let f: io::file =>
 				grraw = io::drain(f)!;
 				io::close(f)!;
-				grlines =
-					strings::split(
-						strings::fromutf8(grraw)!,
-						"\n")!;
+				grlines = strings::split(strings::fromutf8(grraw)!, "\n")!;
 			case let e: fs::error => yield;
 		};
 		defer free(grraw);
@@ -135,8 +122,7 @@ export fn run(args: []str) int = {
 			defer free(nlinkstr);
 			const sizestr = asprintf("{}", st.sz)!;
 			defer free(sizestr);
-			if (len(nlinkstr) > max_nlink)
-				max_nlink = len(nlinkstr);
+			if (len(nlinkstr) > max_nlink) max_nlink = len(nlinkstr);
 			if (len(sizestr) > max_size) max_size = len(sizestr);
 
 			const uidstr = asprintf("{}", st.uid)!;
@@ -148,8 +134,7 @@ export fn run(args: []str) int = {
 
 			// passwd format: name:x:uid:...  group format: name:x:gid:...
 			for (let line .. pwlines) {
-				const fields = match (strings::split(line,
-					":")) {
+				const fields = match (strings::split(line, ":")) {
 					case let xs: []str => yield xs;
 					case nomem => break;
 				};
@@ -160,8 +145,7 @@ export fn run(args: []str) int = {
 				};
 			};
 			for (let line .. grlines) {
-				const fields = match (strings::split(line,
-					":")) {
+				const fields = match (strings::split(line, ":")) {
 					case let xs: []str => yield xs;
 					case nomem => break;
 				};
@@ -184,8 +168,7 @@ export fn run(args: []str) int = {
 			const st = match (os::stat(dir.name)) {
 				case let st: fs::filestat => yield st;
 				case let e: fs::error =>
-					errorfln("vdir: {}: {}", dir.name,
-						fs::strerror(e))!;
+					errorfln("vdir: {}: {}", dir.name, fs::strerror(e))!;
 					continue;
 			};
 
@@ -206,8 +189,7 @@ export fn run(args: []str) int = {
 
 			// passwd format: name:x:uid:...  group format: name:x:gid:...
 			for (let line .. pwlines) {
-				const fields = match (strings::split(line,
-					":")) {
+				const fields = match (strings::split(line, ":")) {
 					case let xs: []str => yield xs;
 					case nomem => break;
 				};
@@ -218,8 +200,7 @@ export fn run(args: []str) int = {
 				};
 			};
 			for (let line .. grlines) {
-				const fields = match (strings::split(line,
-					":")) {
+				const fields = match (strings::split(line, ":")) {
 					case let xs: []str => yield xs;
 					case nomem => break;
 				};
@@ -234,8 +215,7 @@ export fn run(args: []str) int = {
 			defer free(nlinkstr);
 			const sizestr = asprintf("{}", st.sz)!;
 			defer free(sizestr);
-			const nlinkpad =
-				strings::lpad(nlinkstr, ' ', max_nlink)!;
+			const nlinkpad = strings::lpad(nlinkstr, ' ', max_nlink)!;
 			defer free(nlinkpad);
 			const ownerpad = strings::rpad(owner, ' ', max_owner)!;
 			defer free(ownerpad);
@@ -259,9 +239,7 @@ export fn run(args: []str) int = {
 			} else {
 				const yr = date::asformat("%Y", &d)!;
 				defer free(yr);
-				when =
-					asprintf("{} {}  {}", month, daypad,
-						yr)!;
+				when = asprintf("{} {}  {}", month, daypad, yr)!;
 				freewhen = true;
 			};
 			defer if (freewhen) free(when);
@@ -271,10 +249,7 @@ export fn run(args: []str) int = {
 			if (fs::islink(st.mode)) {
 				match (os::readlink(dir.name)) {
 					case let target: str =>
-						dispname =
-							asprintf("{} -> {}",
-								dir.name,
-								target)!;
+						dispname = asprintf("{} -> {}", dir.name, target)!;
 						freename = true;
 					case let e: fs::error => void;
 				};

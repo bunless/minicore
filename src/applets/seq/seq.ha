@@ -53,9 +53,7 @@ export fn run(args: []str) int = {
 		return 1;
 	};
 
-	if (step > 0)
-		for (let i = first; i <= last; i += step) printf("{}\n", i)!;
-	if (step <= 0)
-		for (let i = first; i >= last; i += step) printf("{}\n", i)!;
+	if (step > 0) for (let i = first; i <= last; i += step) printf("{}\n", i)!;
+	if (step <= 0) for (let i = first; i >= last; i += step) printf("{}\n", i)!;
 	return 0;
 };

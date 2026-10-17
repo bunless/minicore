@@ -6,8 +6,7 @@ export fn run(files: []str) int = {
 		match (rt::unlink(file)) {
 			case void => yield;
 			case let e: rt::errno =>
-				errorfln("unlink: {}: {}", file,
-					rt::strerror(e))!;
+				errorfln("unlink: {}: {}", file, rt::strerror(e))!;
 				return 1;
 		};
 	};

@@ -11,6 +11,8 @@ use src::applets::dir;
 use src::applets::less;
 use src::applets::ls;
 use src::applets::mv;
+use src::applets::printf;
+use src::applets::pwd;
 use src::applets::rm;
 use src::applets::rmdir;
 use src::applets::seq;
@@ -20,6 +22,8 @@ use src::applets::sha256sum;
 use src::applets::sha384sum;
 use src::applets::sha512sum;
 use src::applets::sort;
+use src::applets::sum;
+use src::applets::unfalse;
 use src::applets::unlink;
 use src::applets::untrue;
 use src::applets::vdir;
@@ -78,6 +82,14 @@ export fn main() void = {
 			run = &mv::run,
 		},
 		dispatcher::entry {
+			name = "printf",
+			run = &printf::run,
+		},
+		dispatcher::entry {
+			name = "pwd",
+			run = &pwd::run,
+		},
+		dispatcher::entry {
 			name = "rm",
 			run = &rm::run,
 		},
@@ -112,6 +124,14 @@ export fn main() void = {
 		dispatcher::entry {
 			name = "sort",
 			run = &sort::run,
+		},
+		dispatcher::entry {
+			name = "sum",
+			run = &sum::run,
+		},
+		dispatcher::entry {
+			name = "true",
+			run = &unfalse::run,
 		},
 		dispatcher::entry {
 			name = "unlink",

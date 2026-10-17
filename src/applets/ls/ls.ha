@@ -12,9 +12,7 @@ export fn run(args: []str) int = {
 				printfln("ls: {}", fs::strerror(e))!;
 				return 1;
 			case nomem =>
-				errorfln(
-					"ls: Could not allocate enough memory"
-				)!;
+				errorfln("ls: Could not allocate enough memory")!;
 				return 1;
 		};
 
@@ -25,8 +23,7 @@ export fn run(args: []str) int = {
 				// should dirs[j] be listed before dirs[j - 1]?
 				const x = strings::toutf8(dirs[j].name);
 				const y = strings::toutf8(dirs[j - 1].name);
-				const n = if (len(x) < len(y)) len(x)
-					else len(y);
+				const n = if (len(x) < len(y)) len(x) else len(y);
 				let less = false;
 				let decided = false;
 
@@ -34,12 +31,8 @@ export fn run(args: []str) int = {
 				for (let k = 0z; k < n; k += 1) {
 					let p = x[k];
 					let q = y[k];
-					if (p >= 'A': u8
-							&& p <= 'Z': u8)
-						p += 32;
-					if (q >= 'A': u8
-							&& q <= 'Z': u8)
-						q += 32;
+					if (p >= 'A': u8 && p <= 'Z': u8) p += 32;
+					if (q >= 'A': u8 && q <= 'Z': u8) q += 32;
 					if (p != q) {
 						less = p < q;
 						decided = true;
